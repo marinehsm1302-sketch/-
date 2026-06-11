@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "meme": {
+      "title": "Tigers Meme",
+      "description": "KIA 타이거즈의 상징성과 유쾌함을 담고 있는 팬덤 전용 밈 데이터 모델",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "고유 식별자" },
+        "title": { "type": "string", "description": "밈 제목 (예: 삐끼삐끼 댄스)" },
+        "origin": { "type": "string", "description": "밈의 유래 및 설명" },
+        "votes": { "type": "integer", "description": "실시간 팬 화력 추천 수" },
+        "tags": { "type": "array", "description": "밈 태그 분류 목록" }
+      },
+      "required": ["id", "title", "origin", "votes"]
+    },
+    "cheer": {
+      "title": "Tigers Live Cheer message",
+      "description": "실시간 백투백 홈런 및 응원 메아리가 기록되는 극성 응원글 데이터 모델",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "고유 식별자" },
+        "nickname": { "type": "string", "description": "호랑이 닉네임" },
+        "message": { "type": "string", "description": "응원 한줄평 내용" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "작성 타임스탬프" },
+        "voodooTarget": { "type": "string", "description": "저격 및 방어할 상대 야구단 대상" }
+      },
+      "required": ["id", "nickname", "message", "createdAt"]
+    },
+    "order": {
+      "title": "Tigers POD Order",
+      "description": "체크아웃 완료 후 인쇄 출고되는 나만의 맞춤형 실시간 POD 상품 가상 주문 모델",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "주문 고유 코드" },
+        "customerName": { "type": "string", "description": "주문 수령인 성함" },
+        "email": { "type": "string", "format": "email", "description": "수령 이메일 주소" },
+        "phone": { "type": "string", "description": "전화 연락처 번호" },
+        "address": { "type": "string", "description": "수령 지 주소" },
+        "totalPrice": { "type": "integer", "description": "주문 최종 총금액" },
+        "status": { "type": "string", "enum": ["PENDING", "SHIPPING", "COMPLETED"], "description": "출고 및 가공 상태값" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "주문 시점 타임스탬프" }
+      },
+      "required": ["id", "customerName", "email", "phone", "address", "totalPrice", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/memes/{memeId}": {
+      "schema": "meme",
+      "description": "타이거즈 시그니처 팬덤 밈 컬렉션"
+    },
+    "/cheers/{cheerId}": {
+      "schema": "cheer",
+      "description": "기아 챔필 실시간 극성 응원 댓글판 컬렉션"
+    },
+    "/orders/{orderId}": {
+      "schema": "order",
+      "description": "나만의 POD 굿즈 가상 발주 및 이력 관리 컬렉션"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "KIA Tigers POD Goods Platform",
+  "description": "KIA 타이거즈의 실시간 승리 기록과 팬덤 밈을 즉시 티셔츠, 볼캡, 폰케이스, 머그컵 등 나만의 POD 굿즈로 커스텀 제작하고 구매할 수 있는 실시간 커머스 플랫폼으로, 실시간 AI 슬로건 문구 생성 및 기아 타이거즈 팬 화력 투표 기능을 제공하는 팬 친화적 공간입니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

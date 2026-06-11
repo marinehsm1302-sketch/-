@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net: Default-Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // 2. Tigers Memes Rules
+    match /memes/{memeId} {
+      allow read: if true;
+      allow create: if isValidId(memeId) 
+                    && incoming().id is string
+                    && incoming().title is string && incoming().title.size() <= 100
+                    && incoming().origin is string && incoming().origin.size() <= 1000
+                    && incoming().votes is int
+                    && incoming().tags is list;
+      
+      // Updates only allow incrementing vote counting by exactly 1
+      allow update: if incoming().votes == existing().votes + 1
+                    && incoming().title == existing().title
+                    && incoming().origin == existing().origin;
+    }
+
+    // 3. Cheers Live Messages Rules (Single-write append ONLY)
+    match /cheers/{cheerId} {
+      allow read: if true;
+      allow create: if isValidId(cheerId)
+                    && incoming().id is string
+                    && incoming().nickname is string && incoming().nickname.size() <= 30
+                    && incoming().message is string && incoming().message.size() <= 200
+                    && incoming().createdAt is string;
+      allow update, delete: if false;
+    }
+
+    // 4. Custom POD Orders History Rules
+    match /orders/{orderId} {
+      allow read: if true; // In sandbox mode, allow read so the client can query historic trends
+      allow create: if isValidId(orderId)
+                    && incoming().id is string
+                    && incoming().customerName is string && incoming().customerName.size() <= 50
+                    && incoming().email is string && incoming().email.size() <= 100
+                    && incoming().address is string && incoming().address.size() <= 500
+                    && incoming().totalPrice is int
+                    && incoming().status == 'PENDING';
+      
+      // Stop changes once we are finished with order settings
+      allow update: if existing().status == 'PENDING'
+                    && incoming().status in ['PENDING', 'SHIPPING', 'COMPLETED'];
+      allow delete: if false;
+    }
+  }
+}
